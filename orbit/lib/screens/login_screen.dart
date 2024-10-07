@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:orbit/colors.dart';
 import 'package:orbit/screens/home_screen.dart';
 import 'package:orbit/screens/verify_otp.dart';
+import '../UserData.dart';
 import '../mongodb.dart';
 import '../responsive.dart';
 import '../utils.dart';
@@ -149,6 +150,7 @@ class _login_screenState extends State<login_screen> {
                             setState(() {
                               loading = false;
                               toastMessage("Login successful!");
+                              UserData().email = emailcontroller.text.trim(); // Store email
                               emailcontroller.clear();
                               passcontroller.clear();
                               Navigator.pushReplacement(
