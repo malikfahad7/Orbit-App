@@ -2,8 +2,10 @@ import 'dart:developer';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:bcrypt/bcrypt.dart'; // For password hashing
 import 'constants.dart'; // Ensure constants contain MONGO_URL and COLLECTION_NAME
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
 
 class MongoDatabase {
+
   // Establish a connection to the MongoDB database
   static Future<Db> connect() async {
     var db = await Db.create(MONGO_URL);
@@ -130,4 +132,26 @@ class MongoDatabase {
       }
     }
   }
+  static Future<List<Map<String, dynamic>>> getVerifiedAndCompletedAlerts() async {
+    Db? db;
+    try {
+      db = await connect();
+      var collection = db.collection('suspiciousactivities');
+
+      // Query to fetch alerts with 'verified' or 'completed' status
+      var alerts = await collection.find({
+        'Verification': {r'$in': ['verified', 'completed']}
+      }).toList();
+
+      return alerts; // Return the list of verified/completed alerts
+    } catch (e) {
+      log('Error in getVerifiedAndCompletedAlerts: $e');
+      return [];
+    } finally {
+      if (db != null) {
+        await db.close();
+      }
+    }
+  }
+
 }

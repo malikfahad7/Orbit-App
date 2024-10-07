@@ -29,16 +29,20 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   // Method to submit the action report
   Future<void> submitActionReport() async {
-    // Get userId from the logged-in user
-    var userId = await MongoDatabase.getUserId(userEmail!); // Implement this method to fetch the current user's ID
+    // Get userId from the logged-in user as a unique ObjectId
+    var userObjectId = await MongoDatabase.getUserId(userEmail!); // Implement this method to fetch the current user's unique _id
+
+    // Fetch the SuspiciousActivityId from the alert
+    String suspiciousActivityId = widget.alert['SuspiciousActivityId'];
 
     // Create a random floor number
     String location = "Floor ${Random().nextInt(10) + 1}"; // Random floor between 1 and 10
 
     // Prepare the action report data
     var actionReportData = {
-      'userId': userId,
-      'SuspiciousActivityId': widget.alert['_id'].toHexString(), // Convert ObjectId to String
+      '_id': mongo.ObjectId(), // Generate a new ObjectId for the action report
+      'userId': userObjectId, // Use the user's unique ObjectId
+      'SuspiciousActivityId': suspiciousActivityId, // Use SuspiciousActivityId from the alert data
       'SubmissionDate': DateTime.now(),
       'location': location,
       'IncidentDescription': _descriptionController.text,
